@@ -5,7 +5,8 @@ import javax.swing.*;
 import java.util.Random;
 
 public class GamePanel extends JPanel implements ActionListener{
-    
+    //Instead of making an object, inherit from JPanel class.
+    //Implementing ActionListener to define what to do when user performs certain action.
     static final int width = 600; //Screen size.
     static final int height = 600;
     static final int object_size = 25; //Size for objects in the game.
@@ -22,22 +23,22 @@ public class GamePanel extends JPanel implements ActionListener{
     Timer timer;
     Random random;
 
-    GamePanel(){
+    GamePanel(){ //Constructor.
         random = new Random();
         this.setPreferredSize(new Dimension(width, height));
         this.setBackground(Color.black); //Set background color.
         this.setFocusable(true);
-        this.addKeyListener(new MyKeyAdapter());
+        this.addKeyListener(new MyKeyAdapter()); //Adapter for receiving keyboard events.
         startGame();
     }
     public void startGame(){
         newApple(); //Create a new apple.
         running = true;
-        timer = new Timer(delay, this);
+        timer = new Timer(delay, this); //Using the ActionListener interface.
         timer.start();
     }
-    public void paintComponent(Graphics g){
-        super.paintComponent(g);
+    public void paintComponent(Graphics g){ //paintComponent() instead of paint() because we have moving shapes.
+        super.paintComponent(g); //super is needed because we're getting the paintComponent() from JPanel.
         draw(g);
     }
     public void draw(Graphics g){
@@ -71,24 +72,24 @@ public class GamePanel extends JPanel implements ActionListener{
         }
     }
     public void newApple(){ //Generate coordinates for a new apple.
-        appleX = random.nextInt((int)(width / object_size)) * object_size;
+        appleX = random.nextInt((int)(width / object_size)) * object_size; //Multiply by object_size to place apple evenly within the grid.
         appleY = random.nextInt((int)(height / object_size)) * object_size;
     }
     public void move(){
         for (int i=bodyParts; i>0; i--){ //Iterate through snake bodyparts.
-            x[i] = x[i-1]; //Shifting the bodyparts.
+            x[i] = x[i-1]; //Shifting the coordinates in the array with 1 spot.
             y[i] = y[i-1];
         }
         
         switch (direction){ //Examine the direction variable (U-up D-down L-left R-right).
             case 'U':
-                y[0] = y[0] - object_size;
+                y[0] = y[0] - object_size; //Y-coordinate for the head of the snake.
                 break;
             case 'D':
                 y[0] = y[0] + object_size;
                 break;
             case 'L':
-                x[0] = x[0] - object_size;
+                x[0] = x[0] - object_size; //X-coordinate for the head of the snake.
                 break;
             case 'R':
                 x[0] = x[0] + object_size;
@@ -125,7 +126,7 @@ public class GamePanel extends JPanel implements ActionListener{
         if (y[0] > height){
             running = false;
         }
-        if (!running){
+        if (!running){ //If running is false, stop the timer.
             timer.stop();
         }
     }
@@ -149,14 +150,14 @@ public class GamePanel extends JPanel implements ActionListener{
             checkApple();
             checkCollision();
         }
-        repaint();
+        repaint(); //When the game stops running, repaint it.
     }
     public class MyKeyAdapter extends KeyAdapter{
         @Override
         public void keyPressed(KeyEvent e){
-            switch(e.getKeyCode()){
+            switch(e.getKeyCode()){ //Limiting the user to do only 90 degree turns.
                 case KeyEvent.VK_LEFT:
-                    if (direction != 'R'){
+                    if (direction != 'R'){ 
                         direction = 'L';
                     }
                     break;
